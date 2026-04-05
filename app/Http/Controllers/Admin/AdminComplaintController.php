@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\ComplaintStatusUpdated;
 use App\Models\Complaint;
 use App\Models\ComplaintCategory;
 use App\Models\ComplaintUpdate;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 
 class AdminComplaintController extends Controller
@@ -87,6 +90,19 @@ class AdminComplaintController extends Controller
             'message'      => $data['message'],
             'is_internal'  => $data['is_internal'] ?? false,
         ]);
+
+        // Notify the complaint owner by email (skip for internal-only updates or anonymous complaints)
+        if (!($data['is_internal'] ?? false) && !$complaint->is_anonymous && $complaint->user?->email) {
+            try {
+                Mail::to($complaint->user->email)
+                    ->queue(new ComplaintStatusUpdated($complaint, $data['message']));
+            } catch (\Throwable $e) {
+                Log::warning('Failed to queue complaint status email', [
+                    'complaint_id' => $complaint->id,
+                    'error'        => $e->getMessage(),
+                ]);
+            }
+        }
 
         return back()->with('success', 'Complaint status updated.');
     }

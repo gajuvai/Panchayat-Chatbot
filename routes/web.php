@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminAnalyticsController;
 use App\Http\Controllers\Admin\AdminAnnouncementController;
+use App\Http\Controllers\Admin\AdminComplaintCategoryController;
 use App\Http\Controllers\Admin\AdminComplaintController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminEventController;
@@ -58,6 +59,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::patch('complaints/{complaint}/assign', [AdminComplaintController::class, 'assign'])->name('complaints.assign');
     Route::patch('complaints/{complaint}/status', [AdminComplaintController::class, 'updateStatus'])->name('complaints.status');
 
+    Route::resource('categories', AdminComplaintCategoryController::class)->except(['show']);
+
     Route::resource('announcements', AdminAnnouncementController::class);
     Route::patch('announcements/{announcement}/publish', [AdminAnnouncementController::class, 'publish'])->name('announcements.publish');
 
@@ -105,6 +108,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('announcements/{announcement}', [AnnouncementController::class, 'show'])->name('announcements.show');
 
     Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('notifications/unread', [NotificationController::class, 'unread'])->name('notifications.unread');
     Route::patch('notifications/{id}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
     Route::patch('notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');
 

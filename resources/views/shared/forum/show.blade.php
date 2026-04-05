@@ -52,7 +52,7 @@
                     <button class="text-xs text-gray-500 hover:text-indigo-600">👍 {{ $reply->upvotes }}</button>
                 </form>
                 @if(auth()->id() === $reply->user_id)
-                <form action="{{ route('forum.replies.destroy', $reply) }}" method="POST"
+                <form action="{{ route('replies.destroy', $reply) }}" method="POST"
                     onsubmit="return confirm('Delete reply?')">
                     @csrf @method('DELETE')
                     <button class="text-xs text-red-400 hover:underline">Delete</button>

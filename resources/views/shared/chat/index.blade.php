@@ -40,7 +40,7 @@
                         <span x-text="msg.sender === 'user' ? '{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}' : '🤖'"></span>
                     </div>
                     <div :class="msg.sender === 'user' ? 'bg-indigo-600 text-white rounded-xl rounded-tr-none px-4 py-2.5 max-w-sm text-sm' : 'bg-gray-100 text-gray-800 rounded-xl rounded-tl-none px-4 py-2.5 max-w-sm text-sm'">
-                        <p x-html="msg.text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')"></p>
+                        <p x-html="msg.text"></p>
                         <div x-show="msg.quickReplies && msg.quickReplies.length" class="flex flex-wrap gap-1.5 mt-2">
                             <template x-for="qr in msg.quickReplies || []">
                                 <template x-if="qr.action === 'navigate'">

@@ -13,7 +13,8 @@ RUN apk add --no-cache \
     libxml2-dev \
     oniguruma-dev \
     libzip-dev \
-    supervisor
+    bash \
+    sed
 
 # Install PHP extensions
 RUN docker-php-ext-install \
@@ -53,12 +54,12 @@ RUN composer run-script post-autoload-dump || true
 RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache \
     && chmod -R 775 /app/storage /app/bootstrap/cache
 
-# Copy nginx config
+# Copy configs
 COPY docker/nginx.conf /etc/nginx/nginx.conf
+COPY docker/php-fpm.conf /usr/local/etc/php-fpm.d/www.conf
+COPY docker/start.sh /start.sh
+RUN chmod +x /start.sh
 
-# Copy supervisor config
-COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+EXPOSE 8080
 
-EXPOSE 80
-
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+CMD ["/bin/sh", "/start.sh"]

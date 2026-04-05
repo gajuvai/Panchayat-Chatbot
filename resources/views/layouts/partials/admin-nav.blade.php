@@ -2,6 +2,7 @@
 $navLinks = [
     ['route' => 'admin.dashboard',           'match' => 'admin.dashboard',         'label' => 'Dashboard'],
     ['route' => 'admin.complaints.index',    'match' => 'admin.complaints.*',       'label' => 'Complaints'],
+    ['route' => 'admin.categories.index',   'match' => 'admin.categories.*',       'label' => 'Categories'],
     ['route' => 'admin.announcements.index', 'match' => 'admin.announcements.*',    'label' => 'Announcements'],
     ['route' => 'admin.events.index',        'match' => 'admin.events.*',           'label' => 'Events'],
     ['route' => 'admin.polls.index',         'match' => 'admin.polls.*',            'label' => 'Polls'],

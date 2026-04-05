@@ -96,16 +96,6 @@ class Complaint extends Model
         return $query->where('status', 'resolved');
     }
 
-    public function scopeUrgentUnresolved($query)
-    {
-        return $query->where('priority', 'urgent')->where('status', '!=', 'resolved');
-    }
-
-    public function scopeResolvedToday($query)
-    {
-        return $query->where('status', 'resolved')->whereDate('resolved_at', today());
-    }
-
     public function scopeByCategory($query, int $categoryId)
     {
         return $query->where('category_id', $categoryId);

@@ -25,4 +25,32 @@ class NotificationController extends Controller
         auth()->user()->unreadNotifications->markAsRead();
         return back()->with('success', 'All notifications marked as read.');
     }
+
+    /**
+     * JSON endpoint for real-time polling.
+     * Returns unread count and last 5 notifications.
+     */
+    public function unread()
+    {
+        $user = auth()->user();
+
+        $count = $user->unreadNotifications()->count();
+
+        $notifications = $user->notifications()
+            ->latest()
+            ->limit(5)
+            ->get()
+            ->map(fn ($n) => [
+                'id'         => $n->id,
+                'data'       => $n->data,
+                'read_at'    => $n->read_at?->toIso8601String(),
+                'created_at' => $n->created_at->toIso8601String(),
+                'human_time' => $n->created_at->diffForHumans(),
+            ]);
+
+        return response()->json([
+            'count'         => $count,
+            'notifications' => $notifications,
+        ]);
+    }
 }

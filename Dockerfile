@@ -56,11 +56,9 @@ RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache \
 
 # Copy configs
 COPY docker/nginx.conf /etc/nginx/nginx.conf
+COPY docker/php-fpm.conf /usr/local/etc/php-fpm.d/www.conf
 COPY docker/start.sh /start.sh
 RUN chmod +x /start.sh
-
-# Test which php-fpm binary is available
-RUN which php-fpm || which php-fpm8.3 || echo "php-fpm not found"
 
 EXPOSE 8080
 

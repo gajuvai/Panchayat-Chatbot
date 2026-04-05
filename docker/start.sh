@@ -1,33 +1,47 @@
 #!/bin/sh
-set -e
 
 # Use Railway's PORT or default to 8080
 PORT=${PORT:-8080}
 
-echo "Starting with PORT=$PORT"
+echo "=== Starting Panchayat Chatbot ==="
+echo "PORT=$PORT"
 
-# Replace port placeholder in nginx config
+# Replace port in nginx config
 sed -i "s/PORT_PLACEHOLDER/$PORT/g" /etc/nginx/nginx.conf
 
-# Create required directories
-mkdir -p /var/log/nginx /var/log/php83 /run/nginx
+# Create required dirs
+mkdir -p /var/log/nginx /run
 
-# Start php-fpm in background
+# Check php-fpm binary
+echo "PHP-FPM binary: $(which php-fpm)"
+php-fpm --version
+
+# Start php-fpm (foreground mode, no daemon)
 echo "Starting php-fpm..."
-php-fpm8.3 -D -F &
+php-fpm --nodaemonize &
 PHP_PID=$!
+echo "php-fpm PID: $PHP_PID"
 
-# Wait for php-fpm to be ready
-echo "Waiting for php-fpm..."
-sleep 3
+# Wait for php-fpm socket/port to be ready
+sleep 2
 
-# Run Laravel setup
-echo "Running Laravel setup..."
-php /app/artisan migrate --force || echo "Migration failed, continuing..."
-php /app/artisan config:cache || true
-php /app/artisan route:cache || true
-php /app/artisan view:cache || true
+# Check php-fpm is running
+if kill -0 $PHP_PID 2>/dev/null; then
+    echo "php-fpm is running"
+else
+    echo "ERROR: php-fpm failed to start"
+    exit 1
+fi
 
-# Start nginx in foreground
+# Laravel setup
+echo "Running migrations..."
+cd /app
+php artisan key:generate --force || true
+php artisan migrate --force || echo "Migration warning - continuing"
+php artisan storage:link || true
+php artisan config:cache || true
+php artisan route:cache || true
+php artisan view:cache || true
+
 echo "Starting nginx on port $PORT..."
-nginx -g "daemon off;"
+exec nginx -g "daemon off;"

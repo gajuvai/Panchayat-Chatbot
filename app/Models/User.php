@@ -1,0 +1,159 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+
+class User extends Authenticatable
+{
+    use HasFactory, Notifiable;
+
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'role_id',
+        'flat_number',
+        'block',
+        'phone',
+        'profile_photo',
+        'is_active',
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password'          => 'hashed',
+            'is_active'         => 'boolean',
+        ];
+    }
+
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function complaints(): HasMany
+    {
+        return $this->hasMany(Complaint::class);
+    }
+
+    public function assignedComplaints(): HasMany
+    {
+        return $this->hasMany(Complaint::class, 'assigned_to');
+    }
+
+    public function complaintUpdates(): HasMany
+    {
+        return $this->hasMany(ComplaintUpdate::class);
+    }
+
+    public function announcements(): HasMany
+    {
+        return $this->hasMany(Announcement::class);
+    }
+
+    public function events(): HasMany
+    {
+        return $this->hasMany(Event::class);
+    }
+
+    public function polls(): HasMany
+    {
+        return $this->hasMany(Poll::class);
+    }
+
+    public function forumThreads(): HasMany
+    {
+        return $this->hasMany(ForumThread::class);
+    }
+
+    public function forumReplies(): HasMany
+    {
+        return $this->hasMany(ForumReply::class);
+    }
+
+    public function chatSessions(): HasMany
+    {
+        return $this->hasMany(ChatSession::class);
+    }
+
+    public function feedbacks(): HasMany
+    {
+        return $this->hasMany(Feedback::class);
+    }
+
+    public function eventRsvps(): HasMany
+    {
+        return $this->hasMany(EventRsvp::class);
+    }
+
+    public function pollVotes(): HasMany
+    {
+        return $this->hasMany(PollVote::class);
+    }
+
+    public function securityIncidents(): HasMany
+    {
+        return $this->hasMany(SecurityIncident::class, 'reported_by');
+    }
+
+    public function patrolsAssigned(): HasMany
+    {
+        return $this->hasMany(PatrolAssignment::class, 'assigned_by');
+    }
+
+    public function patrolsReceived(): HasMany
+    {
+        return $this->hasMany(PatrolAssignment::class, 'assigned_to');
+    }
+
+    public function emergencyAlerts(): HasMany
+    {
+        return $this->hasMany(EmergencyAlert::class, 'triggered_by');
+    }
+
+    public function ruleBookSections(): HasMany
+    {
+        return $this->hasMany(RuleBookSection::class);
+    }
+
+    public function hasRole(string $role): bool
+    {
+        return $this->role?->name === $role;
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->hasRole('admin');
+    }
+
+    public function isSecurityHead(): bool
+    {
+        return $this->hasRole('security_head');
+    }
+
+    public function isResident(): bool
+    {
+        return $this->hasRole('resident');
+    }
+
+    public function getDashboardRoute(): string
+    {
+        return match($this->role?->name) {
+            'admin'         => 'admin.dashboard',
+            'security_head' => 'security.dashboard',
+            default         => 'resident.dashboard',
+        };
+    }
+}

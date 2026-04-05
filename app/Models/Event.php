@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\EventStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -24,6 +25,7 @@ class Event extends Model
             'end_date'        => 'datetime',
             'rsvp_deadline'   => 'datetime',
             'is_rsvp_required'=> 'boolean',
+            'status'          => EventStatus::class,
         ];
     }
 
@@ -35,6 +37,16 @@ class Event extends Model
     public function rsvps(): HasMany
     {
         return $this->hasMany(EventRsvp::class);
+    }
+
+    public function scopeUpcoming($query)
+    {
+        return $query->where('status', 'upcoming');
+    }
+
+    public function scopeOngoing($query)
+    {
+        return $query->where('status', 'ongoing');
     }
 
     public function getAttendeeCount(): int

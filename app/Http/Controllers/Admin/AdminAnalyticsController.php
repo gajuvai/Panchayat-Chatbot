@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Complaint;
 use App\Models\ComplaintCategory;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 
 class AdminAnalyticsController extends Controller

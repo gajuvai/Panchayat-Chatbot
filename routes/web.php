@@ -123,3 +123,11 @@ Route::middleware(['auth'])->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+// ─── Catch-all fallback → 404 ─────────────────────────────────────────────────
+Route::fallback(function (\Illuminate\Http\Request $request) {
+    if ($request->expectsJson()) {
+        return response()->json(['message' => 'The requested URL was not found.'], 404);
+    }
+    return response()->view('errors.404', [], 404);
+});

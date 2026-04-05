@@ -34,10 +34,11 @@ else
 fi
 
 # Laravel setup
-echo "Running migrations..."
+echo "Running migrations and seeders..."
 cd /app
 php artisan key:generate --force || true
 php artisan migrate --force || echo "Migration warning - continuing"
+php artisan db:seed --force || echo "Seeder warning - continuing"
 php artisan storage:link || true
 php artisan config:cache || true
 php artisan route:cache || true

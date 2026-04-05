@@ -13,12 +13,15 @@ RUN apk add --no-cache \
     libxml2-dev \
     oniguruma-dev \
     libzip-dev \
+    postgresql-dev \
     supervisor
 
 # Install PHP extensions
 RUN docker-php-ext-install \
     pdo \
     pdo_mysql \
+    pdo_pgsql \
+    pgsql \
     mbstring \
     xml \
     ctype \
@@ -47,10 +50,11 @@ COPY . .
 RUN npm run build
 
 # Run composer scripts after full copy
-RUN composer run-script post-autoload-dump || true
+RUN composer run-script post-autoload-dump --no-interaction || true
 
 # Set permissions
-RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache \
+RUN mkdir -p /var/log/supervisor \
+    && chown -R www-data:www-data /app/storage /app/bootstrap/cache \
     && chmod -R 775 /app/storage /app/bootstrap/cache
 
 # Copy nginx config

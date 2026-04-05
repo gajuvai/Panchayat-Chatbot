@@ -10,11 +10,11 @@ echo "Starting with PORT=$PORT"
 sed -i "s/PORT_PLACEHOLDER/$PORT/g" /etc/nginx/nginx.conf
 
 # Create required directories
-mkdir -p /var/log/nginx /var/log/php83 /run/nginx
+mkdir -p /var/log/nginx /var/run/php-fpm /run/nginx
 
 # Start php-fpm in background
 echo "Starting php-fpm..."
-php-fpm8.3 -D -F &
+php-fpm -D -F &
 PHP_PID=$!
 
 # Wait for php-fpm to be ready

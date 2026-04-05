@@ -4,21 +4,30 @@ set -e
 # Use Railway's PORT or default to 8080
 PORT=${PORT:-8080}
 
+echo "Starting with PORT=$PORT"
+
 # Replace port placeholder in nginx config
-sed "s/PORT_PLACEHOLDER/$PORT/g" /etc/nginx/nginx.conf > /tmp/nginx.conf
-cp /tmp/nginx.conf /etc/nginx/nginx.conf
+sed -i "s/PORT_PLACEHOLDER/$PORT/g" /etc/nginx/nginx.conf
 
-# Run Laravel setup
-php /app/artisan migrate --force
-php /app/artisan config:cache
-php /app/artisan route:cache
-php /app/artisan view:cache
-
-# Create supervisor log directory
-mkdir -p /var/log/supervisor
+# Create required directories
+mkdir -p /var/log/nginx /var/log/php83 /run/nginx
 
 # Start php-fpm in background
-php-fpm -D
+echo "Starting php-fpm..."
+php-fpm8.3 -D -F &
+PHP_PID=$!
+
+# Wait for php-fpm to be ready
+echo "Waiting for php-fpm..."
+sleep 3
+
+# Run Laravel setup
+echo "Running Laravel setup..."
+php /app/artisan migrate --force || echo "Migration failed, continuing..."
+php /app/artisan config:cache || true
+php /app/artisan route:cache || true
+php /app/artisan view:cache || true
 
 # Start nginx in foreground
+echo "Starting nginx on port $PORT..."
 nginx -g "daemon off;"

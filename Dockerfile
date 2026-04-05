@@ -13,8 +13,8 @@ RUN apk add --no-cache \
     libxml2-dev \
     oniguruma-dev \
     libzip-dev \
-    supervisor \
-    bash
+    bash \
+    sed
 
 # Install PHP extensions
 RUN docker-php-ext-install \
@@ -59,6 +59,9 @@ COPY docker/nginx.conf /etc/nginx/nginx.conf
 COPY docker/start.sh /start.sh
 RUN chmod +x /start.sh
 
+# Test which php-fpm binary is available
+RUN which php-fpm || which php-fpm8.3 || echo "php-fpm not found"
+
 EXPOSE 8080
 
-CMD ["/start.sh"]
+CMD ["/bin/sh", "/start.sh"]

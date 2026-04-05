@@ -42,7 +42,7 @@ jobs:
         run: npm run build
 
       - name: Run tests
-        run: php artisan test
+        run: ./vendor/bin/phpunit
         env:
           DB_CONNECTION: sqlite
           DB_DATABASE: ":memory:"

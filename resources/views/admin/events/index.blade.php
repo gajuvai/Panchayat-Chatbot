@@ -37,27 +37,15 @@
                         @endif
                     </td>
                     <td class="px-4 py-3">
-                        @php
-                            $statusClasses = [
-                                'upcoming'  => 'bg-blue-100 text-blue-700',
-                                'ongoing'   => 'bg-green-100 text-green-700',
-                                'completed' => 'bg-gray-100 text-gray-500',
-                                'cancelled' => 'bg-red-100 text-red-600',
-                            ];
-                        @endphp
-                        <span class="text-xs px-2 py-0.5 rounded {{ $statusClasses[$event->status] ?? 'bg-gray-100 text-gray-500' }}">
-                            {{ ucfirst($event->status) }}
+                        <span class="text-xs px-2 py-0.5 rounded {{ $event->status->badgeClass() }}">
+                            {{ $event->status->label() }}
                         </span>
                     </td>
                     <td class="px-4 py-3">
                         <div class="flex items-center gap-3">
                             <a href="{{ route('admin.events.show', $event) }}" class="text-indigo-600 hover:underline text-xs">View</a>
                             <a href="{{ route('admin.events.edit', $event) }}" class="text-gray-500 hover:underline text-xs">Edit</a>
-                            <form action="{{ route('admin.events.destroy', $event) }}" method="POST"
-                                onsubmit="return confirm('Delete this event?')">
-                                @csrf @method('DELETE')
-                                <button class="text-red-400 hover:underline text-xs">Delete</button>
-                            </form>
+                            <x-delete-form :route="route('admin.events.destroy', $event)" resource="event" />
                         </div>
                     </td>
                 </tr>

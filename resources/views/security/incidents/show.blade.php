@@ -26,7 +26,7 @@
                     {{ ucfirst(str_replace('_', ' ', $incident->incident_type)) }}
                 </h1>
                 <p class="text-sm text-gray-500 mt-0.5">
-                    Reported by {{ $incident->reporter->name ?? '—' }}
+                    Reported by {{ $incident->reporter?->name ?? '—' }}
                     &middot; {{ $incident->created_at->format('d M Y, h:i A') }}
                 </p>
             </div>

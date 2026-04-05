@@ -13,14 +13,12 @@ class AdminRuleBookController extends Controller
     public function index(): View
     {
         $rules = RuleBookSection::with('author')->orderBy('section_order')->get();
-
         return view('admin.rules.index', compact('rules'));
     }
 
     public function create(): View
     {
-        $nextOrder = RuleBookSection::max('section_order') + 1;
-
+        $nextOrder = (RuleBookSection::max('section_order') ?? 0) + 1;
         return view('admin.rules.create', compact('nextOrder'));
     }
 
@@ -45,7 +43,6 @@ class AdminRuleBookController extends Controller
     public function show(RuleBookSection $rule): View
     {
         $rule->load('author');
-
         return view('admin.rules.show', compact('rule'));
     }
 
@@ -64,7 +61,6 @@ class AdminRuleBookController extends Controller
         ]);
 
         $data['is_published'] = $request->boolean('is_published');
-
         $rule->update($data);
 
         return redirect()->route('admin.rules.show', $rule)
@@ -74,7 +70,6 @@ class AdminRuleBookController extends Controller
     public function destroy(RuleBookSection $rule): RedirectResponse
     {
         $rule->delete();
-
         return redirect()->route('admin.rules.index')
             ->with('success', 'Rule book section deleted.');
     }

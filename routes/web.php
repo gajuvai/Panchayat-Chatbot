@@ -29,6 +29,11 @@ use App\Http\Controllers\Shared\PollController;
 use App\Http\Controllers\Shared\RuleBookController;
 use Illuminate\Support\Facades\Route;
 
+// Generic dashboard alias — required by Breeze auth controllers (email verify, confirm password, etc.)
+Route::get('/dashboard', function () {
+    return redirect()->route(auth()->user()->getDashboardRoute());
+})->middleware('auth')->name('dashboard');
+
 // Public routes
 Route::get('/', function () {
     if (auth()->check()) {

@@ -7,11 +7,8 @@
 
     <div class="bg-white rounded-xl border p-6">
         <div class="flex items-center gap-2 mb-3">
-            <span class="text-xs px-2 py-0.5 rounded
-                {{ $event->status === 'upcoming' ? 'bg-blue-100 text-blue-700' : '' }}
-                {{ $event->status === 'ongoing' ? 'bg-green-100 text-green-700' : '' }}
-                {{ $event->status === 'completed' ? 'bg-gray-100 text-gray-600' : '' }}">
-                {{ ucfirst($event->status) }}
+            <span class="text-xs px-2 py-0.5 rounded {{ $event->status->badgeClass() }}">
+                {{ $event->status->label() }}
             </span>
             <span class="text-xs text-gray-400">{{ $event->event_date->format('d M Y, h:i A') }}</span>
         </div>
@@ -28,7 +25,7 @@
             @if($event->max_attendees)
             <p>👥 Capacity: {{ $event->max_attendees }}</p>
             @endif
-            <p>Organised by {{ $event->organizer->name }}</p>
+            <p>Organised by {{ $event->organizer?->name ?? 'Unknown' }}</p>
         </div>
 
         <div class="prose prose-sm max-w-none text-gray-700 mb-6">{!! nl2br(e($event->description)) !!}</div>

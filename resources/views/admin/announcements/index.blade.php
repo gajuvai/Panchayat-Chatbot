@@ -11,7 +11,7 @@
     </div>
 
     @if(session('success'))
-    <div class="bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-3 rounded-lg">{{ session('success') }}</div>
+    <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 text-sm px-4 py-3 rounded-lg">{{ session('success') }}</div>
     @endif
 
     <div class="bg-white rounded-xl border overflow-hidden">
@@ -52,11 +52,7 @@
                                     {{ $ann->is_published ? 'Unpublish' : 'Publish' }}
                                 </button>
                             </form>
-                            <form action="{{ route('admin.announcements.destroy', $ann) }}" method="POST"
-                                onsubmit="return confirm('Delete this announcement?')">
-                                @csrf @method('DELETE')
-                                <button class="text-red-400 hover:underline text-xs">Delete</button>
-                            </form>
+                            <x-delete-form :route="route('admin.announcements.destroy', $ann)" resource="announcement" />
                         </div>
                     </td>
                 </tr>

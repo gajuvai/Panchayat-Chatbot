@@ -3,31 +3,26 @@
 
 @section('content')
 <div class="max-w-3xl mx-auto space-y-4">
-    <a href="{{ route('admin.events.index') }}" class="text-indigo-600 text-sm hover:underline inline-block">← Back to Events</a>
+    <x-back-link :href="route('admin.events.index')">Back to Events</x-back-link>
 
     <div class="bg-white rounded-xl border p-6">
         {{-- Header --}}
         <div class="flex items-start justify-between gap-4 mb-4">
             <div>
-                @php
-                    $statusClasses = [
-                        'upcoming'  => 'bg-blue-100 text-blue-700',
-                        'ongoing'   => 'bg-green-100 text-green-700',
-                        'completed' => 'bg-gray-100 text-gray-500',
-                        'cancelled' => 'bg-red-100 text-red-600',
-                    ];
-                @endphp
-                <span class="text-xs px-2 py-0.5 rounded {{ $statusClasses[$event->status] ?? 'bg-gray-100 text-gray-500' }}">
-                    {{ ucfirst($event->status) }}
+                <span class="text-xs px-2 py-0.5 rounded {{ $event->status->badgeClass() }}">
+                    {{ $event->status->label() }}
                 </span>
             </div>
             <div class="flex gap-2">
                 <a href="{{ route('admin.events.edit', $event) }}"
                     class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700 transition">Edit</a>
-                <form action="{{ route('admin.events.destroy', $event) }}" method="POST"
-                    onsubmit="return confirm('Delete this event? This cannot be undone.')">
-                    @csrf @method('DELETE')
-                    <button class="border border-red-200 text-red-500 px-4 py-2 rounded-lg text-sm hover:bg-red-50 transition">
+                <x-delete-form
+                    :route="route('admin.events.destroy', $event)"
+                    resource="event"
+                    label="Delete"
+                    btn-class="border border-red-200 text-red-500 px-4 py-2 rounded-lg text-sm hover:bg-red-50 transition"
+                    confirm="Delete this event? This cannot be undone."
+                />
                         Delete
                     </button>
                 </form>

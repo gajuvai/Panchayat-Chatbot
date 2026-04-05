@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Enums\EventStatus;
 use App\Models\Event;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules\Enum;
 use Illuminate\View\View;
 
 class AdminEventController extends Controller
@@ -37,7 +39,7 @@ class AdminEventController extends Controller
         ]);
 
         $data['user_id'] = $request->user()->id;
-        $data['status']  = 'upcoming';
+        $data['status']  = EventStatus::Upcoming;
 
         Event::create($data);
 
@@ -47,8 +49,8 @@ class AdminEventController extends Controller
 
     public function show(Event $event): View
     {
-        $event->load(['organizer', 'rsvps.user']);
-        $rsvpCount = $event->rsvps->where('status', 'attending')->count();
+        $event->load(['organizer', 'rsvps' => fn($q) => $q->where('status', 'attending')->with('user')]);
+        $rsvpCount = $event->rsvps->count();
 
         return view('admin.events.show', compact('event', 'rsvpCount'));
     }
@@ -64,10 +66,10 @@ class AdminEventController extends Controller
             'title'         => ['required', 'string', 'max:255'],
             'description'   => ['required', 'string'],
             'venue'         => ['required', 'string', 'max:255'],
-            'event_date'    => ['required', 'date'],
+            'event_date'    => ['required', 'date', 'after:today'],
             'end_date'      => ['required', 'date', 'after:event_date'],
             'max_attendees' => ['nullable', 'integer', 'min:1'],
-            'status'        => ['required', 'in:upcoming,ongoing,completed,cancelled'],
+            'status'        => ['required', new Enum(EventStatus::class)],
         ]);
 
         $event->update($data);

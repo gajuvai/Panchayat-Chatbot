@@ -45,7 +45,7 @@ class PollController extends Controller
         PollVote::create([
             'poll_id'        => $poll->id,
             'poll_option_id' => $option->id,
-            'user_id'        => $poll->is_anonymous ? null : $request->user()->id,
+            'user_id'        => $request->user()->id,  // Always store for duplicate prevention; anonymity hides name in results only
             'ip_address'     => $request->ip(),
         ]);
 

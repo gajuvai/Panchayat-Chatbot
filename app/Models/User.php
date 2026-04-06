@@ -128,6 +128,16 @@ class User extends Authenticatable
         return $this->hasMany(RuleBookSection::class);
     }
 
+    public function scopeWithRole($query, string $role)
+    {
+        return $query->whereHas('role', fn ($q) => $q->where('name', $role));
+    }
+
+    public function scopeStaff($query)
+    {
+        return $query->whereHas('role', fn ($q) => $q->whereIn('name', ['admin', 'security_head']));
+    }
+
     public function hasRole(string $role): bool
     {
         return $this->role?->name === $role;

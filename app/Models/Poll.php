@@ -43,7 +43,7 @@ class Poll extends Model
         return $this->hasMany(PollVote::class);
     }
 
-    public function scopeActiveNowScope($query)
+    public function scopeActiveNow($query)
     {
         return $query->where('is_active', true)->where('ends_at', '>', now());
     }

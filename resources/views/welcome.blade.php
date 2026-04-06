@@ -59,23 +59,6 @@
             </div>
             @endforeach
         </div>
-
-        {{-- Demo credentials --}}
-        <div class="mt-16 bg-white rounded-2xl border p-6 max-w-lg w-full">
-            <h3 class="font-semibold text-gray-800 mb-3">Demo Credentials</h3>
-            <div class="space-y-2 text-sm">
-                @foreach([
-                    ['role'=>'Admin','email'=>'admin@panchayat.local'],
-                    ['role'=>'Security Head','email'=>'security@panchayat.local'],
-                    ['role'=>'Resident','email'=>'ramesh@example.com'],
-                ] as $demo)
-                <div class="flex items-center justify-between bg-gray-50 rounded-lg px-3 py-2">
-                    <span class="font-medium text-gray-700">{{ $demo['role'] }}</span>
-                    <span class="text-gray-500">{{ $demo['email'] }} / <code class="bg-gray-200 px-1 rounded text-xs">password</code></span>
-                </div>
-                @endforeach
-            </div>
-        </div>
     </main>
 </div>
 

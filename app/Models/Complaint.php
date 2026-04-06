@@ -106,6 +106,18 @@ class Complaint extends Model
         return $query->where('assigned_to', $userId);
     }
 
+    public function scopeResolvedToday($query)
+    {
+        return $query->where('status', 'resolved')
+            ->whereDate('resolved_at', today());
+    }
+
+    public function scopeUrgentUnresolved($query)
+    {
+        return $query->where('priority', 'urgent')
+            ->whereNotIn('status', ['resolved', 'closed']);
+    }
+
     public function isUpvotedBy(User $user): bool
     {
         return $this->upvoteRecords()->where('user_id', $user->id)->exists();

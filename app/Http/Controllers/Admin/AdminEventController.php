@@ -66,7 +66,7 @@ class AdminEventController extends Controller
             'title'         => ['required', 'string', 'max:255'],
             'description'   => ['required', 'string'],
             'venue'         => ['required', 'string', 'max:255'],
-            'event_date'    => ['required', 'date', 'after:today'],
+            'event_date'    => ['required', 'date', 'after:now'],
             'end_date'      => ['required', 'date', 'after:event_date'],
             'max_attendees' => ['nullable', 'integer', 'min:1'],
             'status'        => ['required', new Enum(EventStatus::class)],

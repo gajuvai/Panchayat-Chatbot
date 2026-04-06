@@ -28,7 +28,7 @@ class EventController extends Controller
     {
         $data = $request->validate([
             'status'       => ['required', 'in:attending,not_attending,maybe'],
-            'guests_count' => ['integer', 'min:0', 'max:10'],
+            'guests_count' => ['nullable', 'integer', 'min:0', 'max:10'],
             'notes'        => ['nullable', 'string', 'max:255'],
         ]);
 

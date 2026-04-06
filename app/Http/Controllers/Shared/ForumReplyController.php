@@ -7,6 +7,7 @@ use App\Models\ForumReply;
 use App\Models\ForumThread;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class ForumReplyController extends Controller
 {
@@ -31,9 +32,36 @@ class ForumReplyController extends Controller
         return back()->with('success', 'Reply posted.');
     }
 
+    public function edit(ForumReply $reply): View
+    {
+        $this->authorize('update', $reply);
+
+        return view('shared.forum.edit_reply', compact('reply'));
+    }
+
+    public function update(Request $request, ForumReply $reply): RedirectResponse
+    {
+        $this->authorize('update', $reply);
+
+        $data = $request->validate([
+            'body' => ['required', 'string'],
+        ]);
+
+        $reply->update($data);
+
+        return redirect()->route('forum.show', $reply->thread_id)
+            ->with('success', 'Reply updated.');
+    }
+
     public function upvote(Request $request, ForumThread $thread, ForumReply $reply): RedirectResponse
     {
-        $reply->increment('upvotes');
+        // Prevent duplicate upvotes using session tracking
+        $key = 'reply_upvoted_' . $reply->id;
+
+        if (!session()->has($key)) {
+            $reply->increment('upvotes');
+            session()->put($key, true);
+        }
 
         return back();
     }

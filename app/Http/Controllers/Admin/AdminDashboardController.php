@@ -19,7 +19,7 @@ class AdminDashboardController extends Controller
             'resolved_today'   => Complaint::resolvedToday()->count(),
             'total_residents'  => User::withRole('resident')->count(),
             'active_events'    => Event::upcoming()->count(),
-            'active_polls'     => Poll::activeNowScope()->count(),
+            'active_polls'     => Poll::activeNow()->count(),
         ];
 
         $recentComplaints = Complaint::with(['user', 'category'])

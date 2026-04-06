@@ -20,10 +20,26 @@
         </button>
     </div>
 
+    {{-- Active alert banner --}}
+    @if($activeCount > 0)
+    <div class="bg-red-600 text-white rounded-xl px-5 py-3 flex items-center gap-3">
+        <svg class="w-5 h-5 animate-pulse flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+        <span class="font-semibold">{{ $activeCount }} active emergency alert{{ $activeCount > 1 ? 's' : '' }} in progress</span>
+    </div>
+    @endif
+
     {{-- Flash messages --}}
     @if(session('success'))
     <div class="bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-3 rounded-lg">
         {{ session('success') }}
+    </div>
+    @endif
+    @if(session('error'))
+    <div class="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg">
+        {{ session('error') }}
     </div>
     @endif
 
@@ -40,7 +56,7 @@
                 <div>
                     <h2 class="text-lg font-bold text-red-800">Trigger Emergency Alert</h2>
                     <p class="text-sm text-red-600 mt-0.5">
-                        Warning: This will immediately notify all residents and relevant authorities.
+                        Warning: This will immediately notify all residents and admins.
                         Only trigger an alert for genuine emergencies.
                     </p>
                 </div>
@@ -84,6 +100,33 @@
         </div>
     </div>
 
+    {{-- Filters --}}
+    <form method="GET" class="flex flex-wrap gap-3 items-end">
+        <div>
+            <label class="block text-xs text-gray-500 mb-1">Type</label>
+            <select name="type" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                <option value="">All Types</option>
+                @foreach(['fire' => 'Fire', 'medical' => 'Medical', 'security' => 'Security', 'natural_disaster' => 'Natural Disaster', 'other' => 'Other'] as $val => $label)
+                <option value="{{ $val }}" {{ request('type') === $val ? 'selected' : '' }}>{{ $label }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div>
+            <label class="block text-xs text-gray-500 mb-1">Status</label>
+            <select name="status" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                <option value="">All</option>
+                <option value="active"   {{ request('status') === 'active'   ? 'selected' : '' }}>Active</option>
+                <option value="resolved" {{ request('status') === 'resolved' ? 'selected' : '' }}>Resolved</option>
+            </select>
+        </div>
+        <button type="submit" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm transition">
+            Filter
+        </button>
+        @if(request()->hasAny(['type','status']))
+        <a href="{{ route('security.alerts.index') }}" class="text-sm text-gray-500 hover:text-gray-700 py-2">Clear</a>
+        @endif
+    </form>
+
     {{-- Alerts table --}}
     <div class="bg-white rounded-xl border overflow-hidden">
         <table class="w-full text-sm">
@@ -121,8 +164,17 @@
                     </td>
                     <td class="px-4 py-3 text-gray-400 text-xs">{{ $alert->created_at->format('d M Y, h:i A') }}</td>
                     <td class="px-4 py-3">
-                        <a href="{{ route('security.alerts.show', $alert) }}"
-                            class="text-indigo-600 hover:underline text-xs font-medium">View</a>
+                        <div class="flex items-center gap-3">
+                            <a href="{{ route('security.alerts.show', $alert) }}"
+                                class="text-indigo-600 hover:underline text-xs font-medium">View</a>
+                            @if($alert->is_active)
+                            <form action="{{ route('security.alerts.resolve', $alert) }}" method="POST"
+                                onsubmit="return confirm('Mark this alert as resolved?')">
+                                @csrf @method('PATCH')
+                                <button type="submit" class="text-xs text-green-600 hover:underline font-medium">Resolve</button>
+                            </form>
+                            @endif
+                        </div>
                     </td>
                 </tr>
                 @empty

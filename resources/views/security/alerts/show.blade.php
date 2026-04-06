@@ -5,10 +5,15 @@
 <div class="max-w-2xl mx-auto">
     <a href="{{ route('security.alerts.index') }}" class="text-indigo-600 text-sm hover:underline mb-4 inline-block">← Back to Alerts</a>
 
-    {{-- Flash message --}}
+    {{-- Flash messages --}}
     @if(session('success'))
     <div class="bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-3 rounded-lg mb-4">
         {{ session('success') }}
+    </div>
+    @endif
+    @if(session('error'))
+    <div class="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg mb-4">
+        {{ session('error') }}
     </div>
     @endif
 

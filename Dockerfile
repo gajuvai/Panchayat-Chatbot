@@ -1,27 +1,21 @@
 FROM php:8.3-fpm-alpine
 
+# Install php-extension-installer (pre-compiled binaries — much faster than docker-php-ext-install)
+COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
+
 # Install system dependencies
 RUN apk add --no-cache \
     nginx \
     nodejs \
     npm \
-    curl \
-    zip \
-    unzip \
-    git \
-    libpng-dev \
-    libxml2-dev \
-    oniguruma-dev \
-    libzip-dev \
-    postgresql-dev \
     bash \
     sed
 
-# Install PHP extensions
-RUN docker-php-ext-install \
+# Install PHP extensions using pre-compiled binaries
+RUN install-php-extensions \
     pdo \
-    pdo_pgsql \
     pdo_mysql \
+    pdo_pgsql \
     mbstring \
     xml \
     ctype \

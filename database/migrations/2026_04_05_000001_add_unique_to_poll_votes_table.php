@@ -9,10 +9,14 @@ return new class extends Migration
     public function up(): void
     {
         // Remove duplicate votes before adding constraint
+        // Wrapped in a subquery alias to satisfy MySQL's restriction on
+        // referencing the target table in a DELETE subquery
         \DB::statement('
             DELETE FROM poll_votes
             WHERE id NOT IN (
-                SELECT MIN(id) FROM poll_votes GROUP BY poll_id, user_id
+                SELECT min_id FROM (
+                    SELECT MIN(id) AS min_id FROM poll_votes GROUP BY poll_id, user_id
+                ) AS tmp
             )
             AND user_id IS NOT NULL
         ');

@@ -8,11 +8,16 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Remove duplicate votes before adding constraint
+        // Remove duplicate votes before adding constraint.
+        // The subquery is wrapped in a derived table alias so MySQL does not
+        // complain about referencing the target table in the FROM clause
+        // (SQLSTATE HY000 / error 1093).
         \DB::statement('
             DELETE FROM poll_votes
             WHERE id NOT IN (
-                SELECT MIN(id) FROM poll_votes GROUP BY poll_id, user_id
+                SELECT id FROM (
+                    SELECT MIN(id) AS id FROM poll_votes GROUP BY poll_id, user_id
+                ) AS keep_ids
             )
             AND user_id IS NOT NULL
         ');

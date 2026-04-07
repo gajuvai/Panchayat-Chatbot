@@ -14,7 +14,6 @@ RUN apk add --no-cache \
     oniguruma-dev \
     libzip-dev \
     postgresql-dev \
-    netcat-openbsd \
     bash \
     sed
 

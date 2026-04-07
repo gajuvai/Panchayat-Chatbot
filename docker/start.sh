@@ -41,25 +41,20 @@ if [ -z "$APP_KEY" ]; then
     php artisan key:generate --force || true
 fi
 
-# Wait for database to be ready using TCP check
-DB_HOST_CHECK=${DB_HOST:-127.0.0.1}
-DB_PORT_CHECK=${DB_PORT:-3306}
-echo "Waiting for database at $DB_HOST_CHECK:$DB_PORT_CHECK..."
+# Wait for database and run migrations (retry loop handles DB not-ready)
+echo "Running migrations (will retry until DB is ready)..."
 MAX_RETRIES=30
 COUNT=0
-until nc -z -w 2 "$DB_HOST_CHECK" "$DB_PORT_CHECK" 2>/dev/null; do
+until php artisan migrate --force 2>&1; do
     COUNT=$((COUNT + 1))
     if [ $COUNT -ge $MAX_RETRIES ]; then
-        echo "ERROR: Database not reachable after $MAX_RETRIES attempts"
+        echo "ERROR: Migrations failed after $MAX_RETRIES attempts"
         exit 1
     fi
-    echo "Database not ready, retrying ($COUNT/$MAX_RETRIES)..."
-    sleep 2
+    echo "Migration attempt $COUNT failed, retrying in 3s..."
+    sleep 3
 done
-echo "Database is ready."
-
-echo "Running migrations..."
-php artisan migrate --force || { echo "Migration failed"; exit 1; }
+echo "Migrations complete."
 
 # Seed only if the users table is empty (fresh deploy)
 USER_COUNT=$(php artisan tinker --no-interaction --execute="echo \App\Models\User::count();" 2>/dev/null | tail -1)

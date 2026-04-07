@@ -13,6 +13,8 @@ RUN apk add --no-cache \
     libxml2-dev \
     oniguruma-dev \
     libzip-dev \
+    sqlite \
+    sqlite-dev \
     bash \
     sed
 
@@ -20,6 +22,7 @@ RUN apk add --no-cache \
 RUN docker-php-ext-install \
     pdo \
     pdo_mysql \
+    pdo_sqlite \
     mbstring \
     xml \
     ctype \
@@ -50,9 +53,11 @@ RUN npm run build
 # Run composer scripts after full copy
 RUN composer run-script post-autoload-dump || true
 
-# Set permissions
-RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache \
-    && chmod -R 775 /app/storage /app/bootstrap/cache
+# Set permissions and create sqlite database file
+RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache /app/database \
+    && chmod -R 775 /app/storage /app/bootstrap/cache /app/database \
+    && touch /app/database/database.sqlite \
+    && chown www-data:www-data /app/database/database.sqlite
 
 # Copy configs
 COPY docker/nginx.conf /etc/nginx/nginx.conf

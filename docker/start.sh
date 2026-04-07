@@ -41,11 +41,13 @@ if [ -z "$APP_KEY" ]; then
     php artisan key:generate --force || true
 fi
 
-# Wait for database to be ready (important for PostgreSQL on Railway)
-echo "Waiting for database..."
+# Wait for database to be ready using TCP check
+DB_HOST_CHECK=${DB_HOST:-127.0.0.1}
+DB_PORT_CHECK=${DB_PORT:-3306}
+echo "Waiting for database at $DB_HOST_CHECK:$DB_PORT_CHECK..."
 MAX_RETRIES=30
 COUNT=0
-until php artisan db:show --no-interaction > /dev/null 2>&1; do
+until nc -z -w 2 "$DB_HOST_CHECK" "$DB_PORT_CHECK" 2>/dev/null; do
     COUNT=$((COUNT + 1))
     if [ $COUNT -ge $MAX_RETRIES ]; then
         echo "ERROR: Database not reachable after $MAX_RETRIES attempts"

@@ -34,14 +34,40 @@ else
 fi
 
 # Laravel setup
-echo "Running migrations and seeders..."
 cd /app
+
 # Only generate key if not already set via environment variable
 if [ -z "$APP_KEY" ]; then
     php artisan key:generate --force || true
 fi
-php artisan migrate --force || echo "Migration warning - continuing"
-php artisan db:seed --force || echo "Seeder warning - continuing"
+
+# Wait for database to be ready (important for PostgreSQL on Railway)
+echo "Waiting for database..."
+MAX_RETRIES=30
+COUNT=0
+until php artisan db:show --no-interaction > /dev/null 2>&1; do
+    COUNT=$((COUNT + 1))
+    if [ $COUNT -ge $MAX_RETRIES ]; then
+        echo "ERROR: Database not reachable after $MAX_RETRIES attempts"
+        exit 1
+    fi
+    echo "Database not ready, retrying ($COUNT/$MAX_RETRIES)..."
+    sleep 2
+done
+echo "Database is ready."
+
+echo "Running migrations..."
+php artisan migrate --force || { echo "Migration failed"; exit 1; }
+
+# Seed only if the users table is empty (fresh deploy)
+USER_COUNT=$(php artisan tinker --no-interaction --execute="echo \App\Models\User::count();" 2>/dev/null | tail -1)
+if [ "$USER_COUNT" = "0" ] || [ -z "$USER_COUNT" ]; then
+    echo "Seeding database..."
+    php artisan db:seed --force || echo "Seeder warning - continuing"
+else
+    echo "Database already has data, skipping seed."
+fi
+
 php artisan storage:link || true
 php artisan config:cache || true
 php artisan route:cache || true

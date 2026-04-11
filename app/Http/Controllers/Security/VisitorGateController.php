@@ -17,7 +17,14 @@ class VisitorGateController extends Controller
 
         $passes = VisitorPass::with('resident')
             ->whereDate('expected_date', $date)
-            ->orderByRaw("FIELD(status, 'checked_in', 'approved', 'pending', 'checked_out', 'expired', 'cancelled')")
+            ->orderByRaw("CASE status
+                WHEN 'checked_in'  THEN 1
+                WHEN 'approved'    THEN 2
+                WHEN 'pending'     THEN 3
+                WHEN 'checked_out' THEN 4
+                WHEN 'expired'     THEN 5
+                WHEN 'cancelled'   THEN 6
+                ELSE 7 END")
             ->get()
             ->groupBy(fn ($p) => $p->status->value);
 

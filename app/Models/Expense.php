@@ -83,8 +83,8 @@ class Expense extends Model
     public static function monthlyTotals(int $year): array
     {
         $rows = self::forYear($year)
-            ->selectRaw('MONTH(expense_date) as month, SUM(amount) as total')
-            ->groupBy('month')
+            ->selectRaw('EXTRACT(MONTH FROM expense_date)::int as month, SUM(amount) as total')
+            ->groupByRaw('EXTRACT(MONTH FROM expense_date)')
             ->pluck('total', 'month')
             ->toArray();
 

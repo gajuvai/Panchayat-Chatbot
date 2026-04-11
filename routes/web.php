@@ -10,7 +10,9 @@ use App\Http\Controllers\Admin\AdminPollController;
 use App\Http\Controllers\Admin\AdminRuleBookController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\AdminMaintenanceController;
 use App\Http\Controllers\Resident\ComplaintController;
+use App\Http\Controllers\Resident\MaintenanceController;
 use App\Http\Controllers\Resident\ComplaintMediaController;
 use App\Http\Controllers\Resident\ComplaintUpvoteController;
 use App\Http\Controllers\Resident\ResidentDashboardController;
@@ -57,6 +59,8 @@ Route::middleware(['auth', 'role:resident'])->prefix('resident')->name('resident
     Route::post('complaints/{complaint}/media', [ComplaintMediaController::class, 'store'])->name('complaints.media.store');
     Route::delete('complaints/media/{media}', [ComplaintMediaController::class, 'destroy'])->name('complaints.media.destroy');
     Route::post('feedback', [FeedbackController::class, 'store'])->name('feedback.store');
+    Route::get('maintenance', [MaintenanceController::class, 'index'])->name('maintenance.index');
+    Route::post('maintenance', [MaintenanceController::class, 'store'])->name('maintenance.store');
     Route::get('visitor-passes', [VisitorPassController::class, 'index'])->name('visitor-passes.index');
     Route::post('visitor-passes', [VisitorPassController::class, 'store'])->name('visitor-passes.store');
     Route::patch('visitor-passes/{visitorPass}/cancel', [VisitorPassController::class, 'destroy'])->name('visitor-passes.cancel');
@@ -80,6 +84,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('polls', AdminPollController::class);
     Route::resource('users', AdminUserController::class)->only(['index', 'show', 'edit', 'update']);
     Route::resource('rules', AdminRuleBookController::class);
+
+    Route::get('maintenance', [AdminMaintenanceController::class, 'index'])->name('maintenance.index');
+    Route::get('maintenance/{maintenance}', [AdminMaintenanceController::class, 'show'])->name('maintenance.show');
+    Route::patch('maintenance/{maintenance}/status', [AdminMaintenanceController::class, 'updateStatus'])->name('maintenance.status');
+    Route::patch('maintenance/{maintenance}/assign', [AdminMaintenanceController::class, 'assign'])->name('maintenance.assign');
+    Route::post('maintenance/{maintenance}/media', [AdminMaintenanceController::class, 'storeMedia'])->name('maintenance.media.store');
 
     Route::get('analytics', [AdminAnalyticsController::class, 'index'])->name('analytics.index');
     Route::get('analytics/data', [AdminAnalyticsController::class, 'complaints'])->name('analytics.data');

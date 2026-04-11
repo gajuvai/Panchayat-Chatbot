@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\LostAndFoundItem;
+use App\Models\MaintenanceRequest;
 use App\Models\VisitorPass;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -115,6 +116,16 @@ class User extends Authenticatable
     public function lostFoundItems(): HasMany
     {
         return $this->hasMany(LostAndFoundItem::class);
+    }
+
+    public function maintenanceRequests(): HasMany
+    {
+        return $this->hasMany(MaintenanceRequest::class, 'requested_by');
+    }
+
+    public function assignedMaintenanceRequests(): HasMany
+    {
+        return $this->hasMany(MaintenanceRequest::class, 'assigned_to');
     }
 
     public function approvedVisitorPasses(): HasMany

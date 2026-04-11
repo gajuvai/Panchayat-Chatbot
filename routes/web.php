@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\AdminPollController;
 use App\Http\Controllers\Admin\AdminRuleBookController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\AdminAmenityController;
 use App\Http\Controllers\Admin\AdminMaintenanceController;
 use App\Http\Controllers\Resident\ComplaintController;
 use App\Http\Controllers\Resident\MaintenanceController;
@@ -30,6 +31,8 @@ use App\Http\Controllers\Shared\ForumController;
 use App\Http\Controllers\Shared\ForumReplyController;
 use App\Http\Controllers\Shared\NotificationController;
 use App\Http\Controllers\Shared\PollController;
+use App\Http\Controllers\Shared\AmenityBookingController;
+use App\Http\Controllers\Shared\AmenityController;
 use App\Http\Controllers\Shared\LostFoundController;
 use App\Http\Controllers\Shared\ResidentDirectoryController;
 use App\Http\Controllers\Shared\RuleBookController;
@@ -85,6 +88,15 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('users', AdminUserController::class)->only(['index', 'show', 'edit', 'update']);
     Route::resource('rules', AdminRuleBookController::class);
 
+    // Amenity management
+    Route::get('amenities', [AdminAmenityController::class, 'index'])->name('amenities.index');
+    Route::post('amenities', [AdminAmenityController::class, 'store'])->name('amenities.store');
+    Route::patch('amenities/{amenity}', [AdminAmenityController::class, 'update'])->name('amenities.update');
+    Route::delete('amenities/{amenity}', [AdminAmenityController::class, 'destroy'])->name('amenities.destroy');
+    Route::get('amenity-bookings', [AdminAmenityController::class, 'bookings'])->name('amenity-bookings.index');
+    Route::patch('amenity-bookings/{booking}/approve', [AdminAmenityController::class, 'approveBooking'])->name('amenity-bookings.approve');
+    Route::patch('amenity-bookings/{booking}/reject', [AdminAmenityController::class, 'rejectBooking'])->name('amenity-bookings.reject');
+
     Route::get('maintenance', [AdminMaintenanceController::class, 'index'])->name('maintenance.index');
     Route::get('maintenance/{maintenance}', [AdminMaintenanceController::class, 'show'])->name('maintenance.show');
     Route::patch('maintenance/{maintenance}/status', [AdminMaintenanceController::class, 'updateStatus'])->name('maintenance.status');
@@ -129,6 +141,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('polls', [PollController::class, 'index'])->name('polls.index');
     Route::get('polls/{poll}', [PollController::class, 'show'])->name('polls.show');
     Route::post('polls/{poll}/vote', [PollController::class, 'vote'])->name('polls.vote');
+
+    // Amenities (browse + book)
+    Route::get('amenities', [AmenityController::class, 'index'])->name('amenities.index');
+    Route::get('amenities/my-bookings', [AmenityBookingController::class, 'myBookings'])->name('amenities.my-bookings');
+    Route::get('amenities/{amenity}', [AmenityController::class, 'show'])->name('amenities.show');
+    Route::post('amenities/{amenity}/book', [AmenityBookingController::class, 'store'])->name('amenities.book');
+    Route::patch('amenities/bookings/{amenityBooking}/cancel', [AmenityBookingController::class, 'destroy'])->name('amenities.bookings.cancel');
 
     Route::get('directory', [ResidentDirectoryController::class, 'index'])->name('directory.index');
     Route::patch('directory/settings', [ResidentDirectoryController::class, 'update'])->name('directory.update');

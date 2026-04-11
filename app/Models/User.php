@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\AmenityBooking;
 use App\Models\LostAndFoundItem;
 use App\Models\MaintenanceRequest;
 use App\Models\VisitorPass;
@@ -116,6 +117,11 @@ class User extends Authenticatable
     public function lostFoundItems(): HasMany
     {
         return $this->hasMany(LostAndFoundItem::class);
+    }
+
+    public function amenityBookings(): HasMany
+    {
+        return $this->hasMany(AmenityBooking::class);
     }
 
     public function maintenanceRequests(): HasMany

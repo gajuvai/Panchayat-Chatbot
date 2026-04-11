@@ -74,7 +74,7 @@ class AdminEventController extends Controller
 
         $event->update($data);
 
-        return redirect()->route('admin.events.show', $event)
+        return redirect()->route('admin.events.index')
             ->with('success', 'Event updated successfully.');
     }
 

@@ -42,7 +42,7 @@
             @empty
             <div class="text-center py-8 text-gray-400">
                 <p class="text-sm">No complaints yet.</p>
-                <a href="{{ route('resident.complaints.create') }}" class="text-indigo-600 text-sm mt-2 inline-block hover:underline">File your first complaint</a>
+                <a href="{{ route('resident.complaints.index') }}" class="text-indigo-600 text-sm mt-2 inline-block hover:underline">File your first complaint</a>
             </div>
             @endforelse
         </div>
@@ -53,7 +53,7 @@
             <div class="bg-white rounded-xl shadow-sm border p-5">
                 <h3 class="font-semibold text-gray-800 mb-3">Quick Actions</h3>
                 <div class="space-y-2">
-                    <a href="{{ route('resident.complaints.create') }}" class="flex items-center gap-2 w-full bg-indigo-600 text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-indigo-700 transition">
+                    <a href="{{ route('resident.complaints.index') }}" class="flex items-center gap-2 w-full bg-indigo-600 text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-indigo-700 transition">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                         File New Complaint
                     </a>

@@ -5,9 +5,11 @@
 <div class="space-y-4">
     <div class="flex items-center justify-between">
         <p class="text-gray-500 text-sm">{{ $threads->total() }} thread(s)</p>
-        <a href="{{ route('forum.create') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition">
-            + New Thread
-        </a>
+        <button onclick="window.dispatchEvent(new CustomEvent('open-modal', { detail: 'create-thread' }))"
+            class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition flex items-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            New Thread
+        </button>
     </div>
 
     <form method="GET" class="bg-white rounded-xl border p-4 flex gap-3">
@@ -45,10 +47,46 @@
     @empty
     <div class="bg-white rounded-xl border p-12 text-center">
         <p class="text-gray-400">No threads yet. Start the conversation!</p>
-        <a href="{{ route('forum.create') }}" class="mt-2 inline-block text-indigo-600 text-sm hover:underline">Create first thread</a>
+        <button onclick="window.dispatchEvent(new CustomEvent('open-modal', { detail: 'create-thread' }))"
+            class="mt-2 inline-block text-indigo-600 text-sm hover:underline">Create first thread</button>
     </div>
     @endforelse
 
     {{ $threads->links() }}
 </div>
+
+{{-- Create Thread Modal --}}
+<x-modal name="create-thread" :show="$errors->any()" maxWidth="xl">
+    <div class="bg-white rounded-xl overflow-hidden">
+        <div class="flex items-center justify-between px-6 py-4 border-b bg-gray-50">
+            <h2 class="text-base font-semibold text-gray-800">Start a New Thread</h2>
+            <button @click="show = false" class="text-gray-400 hover:text-gray-600 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <form action="{{ route('forum.store') }}" method="POST" class="p-6 space-y-4">
+            @csrf
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Title <span class="text-red-500">*</span></label>
+                <input type="text" name="title" value="{{ old('title') }}"
+                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 @error('title') border-red-400 @enderror"
+                    placeholder="What's your question or topic?">
+                @error('title')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Body <span class="text-red-500">*</span></label>
+                <textarea name="body" rows="7"
+                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 @error('body') border-red-400 @enderror"
+                    placeholder="Describe your topic in detail...">{{ old('body') }}</textarea>
+                @error('body')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+            </div>
+            <div class="flex gap-3 pt-2 border-t">
+                <button type="submit" class="bg-indigo-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition">
+                    Post Thread
+                </button>
+                <button type="button" @click="show = false" class="text-gray-500 text-sm py-2 hover:text-gray-700">Cancel</button>
+            </div>
+        </form>
+    </div>
+</x-modal>
 @endsection

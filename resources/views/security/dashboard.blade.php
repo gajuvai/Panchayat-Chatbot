@@ -54,7 +54,7 @@
         <div class="bg-white rounded-xl border p-5">
             <div class="flex items-center justify-between mb-3">
                 <h3 class="font-semibold text-gray-800">Upcoming Patrols</h3>
-                <a href="{{ route('security.patrols.create') }}" class="text-indigo-600 text-sm hover:underline">+ Assign</a>
+                <a href="{{ route('security.patrols.index') }}" class="text-indigo-600 text-sm hover:underline">+ Assign</a>
             </div>
             @forelse($upcomingPatrols as $patrol)
             <div class="py-2.5 border-b last:border-0 text-sm">
@@ -74,11 +74,11 @@
 
     {{-- Quick Actions --}}
     <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-        <a href="{{ route('security.incidents.create') }}" class="bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 text-center hover:bg-red-100 transition">
+        <a href="{{ route('security.incidents.index') }}" class="bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 text-center hover:bg-red-100 transition">
             <div class="text-2xl mb-1">🚨</div>
             <div class="text-sm font-medium">Log Incident</div>
         </a>
-        <a href="{{ route('security.patrols.create') }}" class="bg-blue-50 border border-blue-200 text-blue-700 rounded-xl p-4 text-center hover:bg-blue-100 transition">
+        <a href="{{ route('security.patrols.index') }}" class="bg-blue-50 border border-blue-200 text-blue-700 rounded-xl p-4 text-center hover:bg-blue-100 transition">
             <div class="text-2xl mb-1">🗺</div>
             <div class="text-sm font-medium">Assign Patrol</div>
         </a>

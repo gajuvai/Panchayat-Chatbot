@@ -32,9 +32,7 @@
         <div class="grid grid-cols-2 gap-4 border-t pt-4 text-sm">
             <div>
                 <p class="text-xs text-gray-400 mb-0.5">Flat / Block</p>
-                <p class="text-gray-700 font-medium">
-                    {{ $user->block ? $user->block . '-' . $user->flat_number : ($user->flat_number ?? '—') }}
-                </p>
+                <p class="text-gray-700 font-medium">{{ $user->block ? $user->block . '-' . $user->flat_number : ($user->flat_number ?? '—') }}</p>
             </div>
             <div>
                 <p class="text-xs text-gray-400 mb-0.5">Phone</p>
@@ -63,13 +61,14 @@
         </div>
 
         <div class="mt-5">
-            <a href="{{ route('admin.users.edit', $user) }}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700 transition">
+            <button onclick="window.dispatchEvent(new CustomEvent('open-modal', { detail: 'edit-user-role' }))"
+                class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700 transition">
                 Edit Role
-            </a>
+            </button>
         </div>
     </div>
 
-    {{-- Recent Complaints (residents) --}}
+    {{-- Recent Complaints --}}
     @if($recentComplaints->isNotEmpty())
     <div class="bg-white rounded-xl border overflow-hidden">
         <div class="px-4 py-3 border-b bg-gray-50">
@@ -91,9 +90,7 @@
                     <td class="px-4 py-2 text-xs text-gray-400 font-mono">{{ $complaint->complaint_number }}</td>
                     <td class="px-4 py-2 text-gray-700">{{ Str::limit($complaint->title, 45) }}</td>
                     <td class="px-4 py-2">
-                        <span class="text-xs px-2 py-0.5 rounded-full {{ $complaint->status->badgeClass() }}">
-                            {{ $complaint->status->label() }}
-                        </span>
+                        <span class="text-xs px-2 py-0.5 rounded-full {{ $complaint->status->badgeClass() }}">{{ $complaint->status->label() }}</span>
                     </td>
                     <td class="px-4 py-2 text-xs text-gray-400">{{ $complaint->created_at->format('d M Y') }}</td>
                     <td class="px-4 py-2">
@@ -106,4 +103,41 @@
     </div>
     @endif
 </div>
+
+{{-- Edit Role Modal --}}
+<x-modal name="edit-user-role" :show="$errors->isNotEmpty()" maxWidth="md">
+    <div class="bg-white rounded-xl overflow-hidden">
+        <div class="flex items-center justify-between px-6 py-4 border-b bg-gray-50">
+            <div>
+                <h2 class="text-base font-semibold text-gray-800">Edit User Role</h2>
+                <p class="text-xs text-gray-500 mt-0.5">Only the role can be changed.</p>
+            </div>
+            <button @click="show = false" class="text-gray-400 hover:text-gray-600 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <form action="{{ route('admin.users.update', $user) }}" method="POST" class="p-6 space-y-4">
+            @csrf @method('PATCH')
+            <div class="space-y-1 pb-4 border-b">
+                <p class="text-sm text-gray-700 font-medium">{{ $user->name }}</p>
+                <p class="text-xs text-gray-500">{{ $user->email }}</p>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                <select name="role_id" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 @error('role_id') border-red-400 @enderror">
+                    @foreach($roles as $role)
+                    <option value="{{ $role->id }}" {{ old('role_id', $user->role_id) == $role->id ? 'selected' : '' }}>
+                        {{ $role->display_name }}
+                    </option>
+                    @endforeach
+                </select>
+                @error('role_id')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+            </div>
+            <div class="flex gap-3 pt-2 border-t">
+                <button type="submit" class="bg-indigo-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition">Save Changes</button>
+                <button type="button" @click="show = false" class="text-gray-500 text-sm py-2 hover:text-gray-700">Cancel</button>
+            </div>
+        </form>
+    </div>
+</x-modal>
 @endsection

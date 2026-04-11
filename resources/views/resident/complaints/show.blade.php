@@ -6,7 +6,8 @@
     <div class="flex items-center justify-between">
         <a href="{{ route('resident.complaints.index') }}" class="text-indigo-600 text-sm hover:underline">← Back to My Complaints</a>
         @if($complaint->status->value === 'open')
-        <a href="{{ route('resident.complaints.edit', $complaint) }}" class="border border-gray-300 text-gray-700 px-3 py-1.5 rounded-lg text-sm hover:bg-gray-50">Edit</a>
+        <button onclick="window.dispatchEvent(new CustomEvent('open-modal', { detail: 'edit-complaint' }))"
+            class="border border-gray-300 text-gray-700 px-3 py-1.5 rounded-lg text-sm hover:bg-gray-50">Edit</button>
         @endif
     </div>
 
@@ -129,6 +130,67 @@
     </div>
     @endif
 </div>
+
+{{-- Edit Complaint Modal (only shown for open complaints) --}}
+@if($complaint->status->value === 'open')
+<x-modal name="edit-complaint" :show="$errors->isNotEmpty()" maxWidth="xl">
+    <div class="bg-white rounded-xl overflow-hidden">
+        <div class="flex items-center justify-between px-6 py-4 border-b bg-gray-50">
+            <div>
+                <h2 class="text-base font-semibold text-gray-800">Edit Complaint</h2>
+                <p class="text-xs text-gray-500 mt-0.5">{{ $complaint->complaint_number }}</p>
+            </div>
+            <button @click="show = false" class="text-gray-400 hover:text-gray-600 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <div class="overflow-y-auto max-h-[80vh]">
+        <form method="POST" action="{{ route('resident.complaints.update', $complaint) }}" class="p-6 space-y-4">
+            @csrf @method('PATCH')
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Title <span class="text-red-500">*</span></label>
+                <input type="text" name="title" value="{{ old('title', $complaint->title) }}"
+                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 @error('title') border-red-400 @enderror">
+                @error('title')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Description <span class="text-red-500">*</span></label>
+                <textarea name="description" rows="5"
+                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 @error('description') border-red-400 @enderror">{{ old('description', $complaint->description) }}</textarea>
+                @error('description')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+                    <select name="priority" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        @foreach(['low','medium','high','urgent'] as $p)
+                        <option value="{{ $p }}" {{ old('priority', $complaint->priority->value) === $p ? 'selected' : '' }}>{{ ucfirst($p) }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                    <input type="text" name="location" value="{{ old('location', $complaint->location) }}"
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        placeholder="e.g. Block A, Floor 2">
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                <div class="w-full border border-gray-200 bg-gray-50 rounded-lg px-3 py-2 text-sm text-gray-600">
+                    {{ $complaint->category?->name ?? '—' }}
+                </div>
+                <p class="text-xs text-gray-400 mt-1">Category cannot be changed after filing.</p>
+            </div>
+            <div class="flex gap-3 pt-2 border-t">
+                <button type="submit" class="bg-indigo-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition">Update Complaint</button>
+                <button type="button" @click="show = false" class="border border-gray-300 text-gray-700 px-5 py-2 rounded-lg text-sm hover:bg-gray-50 transition">Cancel</button>
+            </div>
+        </form>
+        </div>
+    </div>
+</x-modal>
+@endif
 
 <script>
 function toggleUpvote(id, btn) {

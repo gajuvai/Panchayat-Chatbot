@@ -27,8 +27,9 @@ class AdminUserController extends Controller
         }
 
         $users = $query->latest()->paginate(15)->withQueryString();
+        $roles = Role::orderBy('display_name')->get();
 
-        return view('admin.users.index', compact('users'));
+        return view('admin.users.index', compact('users', 'roles'));
     }
 
     public function show(User $user): View
@@ -36,8 +37,9 @@ class AdminUserController extends Controller
         $user->load('role');
         $recentComplaints = $user->complaints()->latest()->limit(5)->get();
         $complaintsCount  = $user->complaints()->count();
+        $roles            = Role::orderBy('display_name')->get();
 
-        return view('admin.users.show', compact('user', 'recentComplaints', 'complaintsCount'));
+        return view('admin.users.show', compact('user', 'recentComplaints', 'complaintsCount', 'roles'));
     }
 
     public function edit(User $user): View
@@ -56,7 +58,7 @@ class AdminUserController extends Controller
 
         $user->update($data);
 
-        return redirect()->route('admin.users.show', $user)
+        return redirect()->route('admin.users.index')
             ->with('success', 'User role updated successfully.');
     }
 }

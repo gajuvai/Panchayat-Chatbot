@@ -20,7 +20,11 @@ class PatrolAssignmentController extends Controller
             ->latest('shift_start')
             ->paginate(10);
 
-        return view('security.patrol.index', compact('patrols'));
+        $officers = User::whereHas('role', fn ($q) => $q->where('name', 'security_head'))
+            ->orderBy('name')
+            ->get();
+
+        return view('security.patrol.index', compact('patrols', 'officers'));
     }
 
     /**
@@ -64,7 +68,11 @@ class PatrolAssignmentController extends Controller
     {
         $patrol->load(['assignedTo', 'assignedBy']);
 
-        return view('security.patrol.show', compact('patrol'));
+        $officers = User::whereHas('role', fn ($q) => $q->where('name', 'security_head'))
+            ->orderBy('name')
+            ->get();
+
+        return view('security.patrol.show', compact('patrol', 'officers'));
     }
 
     /**
@@ -95,7 +103,7 @@ class PatrolAssignmentController extends Controller
 
         $patrol->update($data);
 
-        return redirect()->route('security.patrols.show', $patrol)
+        return redirect()->route('security.patrols.index')
             ->with('success', 'Patrol assignment updated successfully.');
     }
 

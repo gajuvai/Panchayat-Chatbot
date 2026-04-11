@@ -106,7 +106,7 @@ class AdminPollController extends Controller
             ]);
         }
 
-        return redirect()->route('admin.polls.show', $poll)
+        return redirect()->route('admin.polls.index')
             ->with('success', 'Poll updated successfully.');
     }
 

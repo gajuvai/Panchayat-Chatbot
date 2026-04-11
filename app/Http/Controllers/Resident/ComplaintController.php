@@ -56,7 +56,8 @@ class ComplaintController extends Controller
     {
         $this->authorize('view', $complaint);
         $complaint->load(['category', 'media', 'updates.user', 'assignee', 'feedback']);
-        return view('resident.complaints.show', compact('complaint'));
+        $categories = ComplaintCategory::where('is_active', true)->get();
+        return view('resident.complaints.show', compact('complaint', 'categories'));
     }
 
     public function edit(Complaint $complaint): View

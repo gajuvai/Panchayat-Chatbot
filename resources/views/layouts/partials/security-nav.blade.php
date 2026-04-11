@@ -5,6 +5,7 @@ $navLinks = [
     ['route' => 'security.incidents.index', 'match' => 'security.incidents.*',   'label' => 'Incidents'],
     ['route' => 'security.patrols.index',   'match' => 'security.patrols.*',     'label' => 'Patrols'],
     ['route' => 'security.alerts.index',    'match' => 'security.alerts.*',      'label' => 'Emergency Alerts'],
+    ['route' => 'directory.index',          'match' => 'directory.*',             'label' => 'Community Directory'],
 ];
 @endphp
 @foreach($navLinks as $link)

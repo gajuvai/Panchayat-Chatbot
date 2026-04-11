@@ -23,6 +23,11 @@ class User extends Authenticatable
         'phone',
         'profile_photo',
         'is_active',
+        'is_listed_in_directory',
+        'directory_display_name',
+        'bio',
+        'whatsapp',
+        'interests',
     ];
 
     protected $hidden = [
@@ -33,10 +38,22 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password'          => 'hashed',
-            'is_active'         => 'boolean',
+            'email_verified_at'      => 'datetime',
+            'password'               => 'hashed',
+            'is_active'              => 'boolean',
+            'is_listed_in_directory' => 'boolean',
+            'interests'              => 'array',
         ];
+    }
+
+    public function scopeListed($query)
+    {
+        return $query->where('is_listed_in_directory', true);
+    }
+
+    public function getDisplayNameAttribute(): string
+    {
+        return $this->directory_display_name ?: $this->name;
     }
 
     public function role(): BelongsTo

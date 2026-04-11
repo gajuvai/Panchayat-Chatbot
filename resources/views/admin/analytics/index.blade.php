@@ -3,9 +3,16 @@
 
 @section('content')
 <div class="space-y-6">
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between flex-wrap gap-3">
         <p class="text-sm text-gray-500">Community engagement and complaint statistics</p>
-        <a href="{{ route('admin.analytics.export') }}" class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 transition">⬇ Export CSV</a>
+        <div class="flex items-center gap-2">
+            <div class="flex gap-1 text-sm">
+                <span class="bg-indigo-100 text-indigo-700 px-3 py-1.5 rounded-lg font-medium">Overview</span>
+                <a href="{{ route('admin.analytics.sla') }}" class="border border-gray-300 text-gray-600 px-3 py-1.5 rounded-lg hover:bg-gray-50">SLA</a>
+                <a href="{{ route('admin.analytics.monthly') }}" class="border border-gray-300 text-gray-600 px-3 py-1.5 rounded-lg hover:bg-gray-50">Monthly</a>
+            </div>
+            <a href="{{ route('admin.analytics.export') }}" class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 transition">⬇ Export CSV</a>
+        </div>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">

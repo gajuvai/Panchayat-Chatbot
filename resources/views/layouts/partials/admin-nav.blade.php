@@ -13,6 +13,7 @@ $navLinks = [
     ['route' => 'admin.events.index',        'match' => 'admin.events.*',           'label' => 'Events'],
     ['route' => 'admin.polls.index',         'match' => 'admin.polls.*',            'label' => 'Polls'],
     ['route' => 'admin.analytics.index',     'match' => 'admin.analytics.*',        'label' => 'Analytics'],
+    ['route' => 'admin.documents.index',    'match' => 'admin.documents.*',        'label' => 'Document Library'],
     ['route' => 'admin.rules.index',         'match' => 'admin.rules.*',            'label' => 'Rule Book'],
     ['route' => 'admin.users.index',         'match' => 'admin.users.*',            'label' => 'Users'],
     ['route' => 'directory.index',           'match' => 'directory.*',              'label' => 'Community Directory'],

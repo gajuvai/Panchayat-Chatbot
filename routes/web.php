@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\AdminRuleBookController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\AdminAmenityController;
+use App\Http\Controllers\Admin\AdminDocumentController;
 use App\Http\Controllers\Admin\AdminDutyRosterController;
 use App\Http\Controllers\Admin\AdminExpenseController;
 use App\Http\Controllers\Admin\AdminMaintenanceController;
@@ -35,8 +36,10 @@ use App\Http\Controllers\Shared\NotificationController;
 use App\Http\Controllers\Shared\PollController;
 use App\Http\Controllers\Shared\AmenityBookingController;
 use App\Http\Controllers\Shared\AmenityController;
+use App\Http\Controllers\Shared\DocumentLibraryController;
 use App\Http\Controllers\Shared\DutyRosterController;
 use App\Http\Controllers\Shared\ExpenseDashboardController;
+use App\Http\Controllers\Shared\NotificationPreferenceController;
 use App\Http\Controllers\Shared\LostFoundController;
 use App\Http\Controllers\Shared\ResidentDirectoryController;
 use App\Http\Controllers\Shared\RuleBookController;
@@ -124,7 +127,17 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::get('analytics', [AdminAnalyticsController::class, 'index'])->name('analytics.index');
     Route::get('analytics/data', [AdminAnalyticsController::class, 'complaints'])->name('analytics.data');
+    Route::get('analytics/sla', [AdminAnalyticsController::class, 'sla'])->name('analytics.sla');
+    Route::get('analytics/monthly', [AdminAnalyticsController::class, 'monthly'])->name('analytics.monthly');
     Route::get('analytics/export', [AdminAnalyticsController::class, 'export'])->name('analytics.export');
+
+    // Document Library (Admin)
+    Route::get('documents', [AdminDocumentController::class, 'index'])->name('documents.index');
+    Route::post('documents', [AdminDocumentController::class, 'store'])->name('documents.store');
+    Route::patch('documents/{document}', [AdminDocumentController::class, 'update'])->name('documents.update');
+    Route::delete('documents/{document}', [AdminDocumentController::class, 'destroy'])->name('documents.destroy');
+    Route::post('document-categories', [AdminDocumentController::class, 'storeCategory'])->name('document-categories.store');
+    Route::delete('document-categories/{documentCategory}', [AdminDocumentController::class, 'destroyCategory'])->name('document-categories.destroy');
 });
 
 // ─── SECURITY HEAD ROUTES ──────────────────────────────────────────
@@ -187,6 +200,14 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('announcements', [AnnouncementController::class, 'index'])->name('announcements.index');
     Route::get('announcements/{announcement}', [AnnouncementController::class, 'show'])->name('announcements.show');
+
+    // Document Library (browse + download)
+    Route::get('documents', [DocumentLibraryController::class, 'index'])->name('documents.browse');
+    Route::get('documents/{document}/download', [DocumentLibraryController::class, 'download'])->name('documents.download');
+
+    // Notification Preferences
+    Route::get('notifications/preferences', [NotificationPreferenceController::class, 'index'])->name('notifications.preferences');
+    Route::patch('notifications/preferences', [NotificationPreferenceController::class, 'update'])->name('notifications.preferences.update');
 
     Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::get('notifications/unread', [NotificationController::class, 'unread'])->name('notifications.unread');

@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\AdminRuleBookController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\AdminAmenityController;
+use App\Http\Controllers\Admin\AdminExpenseController;
 use App\Http\Controllers\Admin\AdminMaintenanceController;
 use App\Http\Controllers\Resident\ComplaintController;
 use App\Http\Controllers\Resident\MaintenanceController;
@@ -33,6 +34,7 @@ use App\Http\Controllers\Shared\NotificationController;
 use App\Http\Controllers\Shared\PollController;
 use App\Http\Controllers\Shared\AmenityBookingController;
 use App\Http\Controllers\Shared\AmenityController;
+use App\Http\Controllers\Shared\ExpenseDashboardController;
 use App\Http\Controllers\Shared\LostFoundController;
 use App\Http\Controllers\Shared\ResidentDirectoryController;
 use App\Http\Controllers\Shared\RuleBookController;
@@ -88,6 +90,13 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('users', AdminUserController::class)->only(['index', 'show', 'edit', 'update']);
     Route::resource('rules', AdminRuleBookController::class);
 
+    // Expense management
+    Route::get('expenses', [AdminExpenseController::class, 'index'])->name('expenses.index');
+    Route::post('expenses', [AdminExpenseController::class, 'store'])->name('expenses.store');
+    Route::patch('expenses/{expense}', [AdminExpenseController::class, 'update'])->name('expenses.update');
+    Route::delete('expenses/{expense}', [AdminExpenseController::class, 'destroy'])->name('expenses.destroy');
+    Route::get('expenses/export', [AdminExpenseController::class, 'export'])->name('expenses.export');
+
     // Amenity management
     Route::get('amenities', [AdminAmenityController::class, 'index'])->name('amenities.index');
     Route::post('amenities', [AdminAmenityController::class, 'store'])->name('amenities.store');
@@ -141,6 +150,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('polls', [PollController::class, 'index'])->name('polls.index');
     Route::get('polls/{poll}', [PollController::class, 'show'])->name('polls.show');
     Route::post('polls/{poll}/vote', [PollController::class, 'vote'])->name('polls.vote');
+
+    // Expense dashboard (all roles)
+    Route::get('expenses', [ExpenseDashboardController::class, 'index'])->name('expenses.index');
 
     // Amenities (browse + book)
     Route::get('amenities', [AmenityController::class, 'index'])->name('amenities.index');

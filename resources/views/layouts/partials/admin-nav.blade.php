@@ -5,6 +5,8 @@ $navLinks = [
     ['route' => 'admin.maintenance.index',  'match' => 'admin.maintenance.*',      'label' => 'Maintenance'],
     ['route' => 'admin.amenities.index',    'match' => 'admin.amenities.*',        'label' => 'Amenities'],
     ['route' => 'admin.amenity-bookings.index', 'match' => 'admin.amenity-bookings.*', 'label' => 'Amenity Bookings'],
+    ['route' => 'admin.expenses.index',     'match' => 'admin.expenses.*',         'label' => 'Expenses'],
+    ['route' => 'expenses.index',           'match' => 'expenses.*',               'label' => 'Budget Dashboard'],
     ['route' => 'admin.categories.index',   'match' => 'admin.categories.*',       'label' => 'Categories'],
     ['route' => 'admin.announcements.index', 'match' => 'admin.announcements.*',    'label' => 'Announcements'],
     ['route' => 'admin.events.index',        'match' => 'admin.events.*',           'label' => 'Events'],

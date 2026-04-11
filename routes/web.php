@@ -14,10 +14,12 @@ use App\Http\Controllers\Resident\ComplaintController;
 use App\Http\Controllers\Resident\ComplaintMediaController;
 use App\Http\Controllers\Resident\ComplaintUpvoteController;
 use App\Http\Controllers\Resident\ResidentDashboardController;
+use App\Http\Controllers\Resident\VisitorPassController;
 use App\Http\Controllers\Security\EmergencyAlertController;
 use App\Http\Controllers\Security\PatrolAssignmentController;
 use App\Http\Controllers\Security\SecurityDashboardController;
 use App\Http\Controllers\Security\SecurityIncidentController;
+use App\Http\Controllers\Security\VisitorGateController;
 use App\Http\Controllers\Shared\AnnouncementController;
 use App\Http\Controllers\Shared\ChatController;
 use App\Http\Controllers\Shared\EventController;
@@ -53,6 +55,9 @@ Route::middleware(['auth', 'role:resident'])->prefix('resident')->name('resident
     Route::post('complaints/{complaint}/media', [ComplaintMediaController::class, 'store'])->name('complaints.media.store');
     Route::delete('complaints/media/{media}', [ComplaintMediaController::class, 'destroy'])->name('complaints.media.destroy');
     Route::post('feedback', [FeedbackController::class, 'store'])->name('feedback.store');
+    Route::get('visitor-passes', [VisitorPassController::class, 'index'])->name('visitor-passes.index');
+    Route::post('visitor-passes', [VisitorPassController::class, 'store'])->name('visitor-passes.store');
+    Route::patch('visitor-passes/{visitorPass}/cancel', [VisitorPassController::class, 'destroy'])->name('visitor-passes.cancel');
 });
 
 // ─── ADMIN ROUTES ──────────────────────────────────────────────────
@@ -84,6 +89,10 @@ Route::middleware(['auth', 'role:security_head'])->prefix('security')->name('sec
     Route::get('/dashboard', [SecurityDashboardController::class, 'index'])->name('dashboard');
     Route::resource('incidents', SecurityIncidentController::class);
     Route::resource('patrols', PatrolAssignmentController::class);
+    Route::get('visitors', [VisitorGateController::class, 'index'])->name('visitors.index');
+    Route::patch('visitors/{visitorPass}/approve',   [VisitorGateController::class, 'approve'])->name('visitors.approve');
+    Route::patch('visitors/{visitorPass}/check-in',  [VisitorGateController::class, 'checkIn'])->name('visitors.check-in');
+    Route::patch('visitors/{visitorPass}/check-out', [VisitorGateController::class, 'checkOut'])->name('visitors.check-out');
     Route::get('alerts', [EmergencyAlertController::class, 'index'])->name('alerts.index');
     Route::post('alerts', [EmergencyAlertController::class, 'store'])->name('alerts.store');
     Route::get('alerts/{alert}', [EmergencyAlertController::class, 'show'])->name('alerts.show');

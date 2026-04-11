@@ -1,6 +1,7 @@
 @php
 $navLinks = [
     ['route' => 'security.dashboard',       'match' => 'security.dashboard',     'label' => 'Dashboard'],
+    ['route' => 'security.visitors.index',  'match' => 'security.visitors.*',    'label' => '🪪 Visitor Gate'],
     ['route' => 'security.incidents.index', 'match' => 'security.incidents.*',   'label' => 'Incidents'],
     ['route' => 'security.patrols.index',   'match' => 'security.patrols.*',     'label' => 'Patrols'],
     ['route' => 'security.alerts.index',    'match' => 'security.alerts.*',      'label' => 'Emergency Alerts'],

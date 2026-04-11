@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\VisitorPass;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -86,6 +87,16 @@ class User extends Authenticatable
     public function chatSessions(): HasMany
     {
         return $this->hasMany(ChatSession::class);
+    }
+
+    public function visitorPasses(): HasMany
+    {
+        return $this->hasMany(VisitorPass::class, 'resident_id');
+    }
+
+    public function approvedVisitorPasses(): HasMany
+    {
+        return $this->hasMany(VisitorPass::class, 'approved_by');
     }
 
     public function feedbacks(): HasMany

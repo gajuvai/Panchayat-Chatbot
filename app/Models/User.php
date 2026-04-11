@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\LostAndFoundItem;
 use App\Models\VisitorPass;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -109,6 +110,11 @@ class User extends Authenticatable
     public function visitorPasses(): HasMany
     {
         return $this->hasMany(VisitorPass::class, 'resident_id');
+    }
+
+    public function lostFoundItems(): HasMany
+    {
+        return $this->hasMany(LostAndFoundItem::class);
     }
 
     public function approvedVisitorPasses(): HasMany

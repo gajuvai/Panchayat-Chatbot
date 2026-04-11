@@ -28,6 +28,7 @@ use App\Http\Controllers\Shared\ForumController;
 use App\Http\Controllers\Shared\ForumReplyController;
 use App\Http\Controllers\Shared\NotificationController;
 use App\Http\Controllers\Shared\PollController;
+use App\Http\Controllers\Shared\LostFoundController;
 use App\Http\Controllers\Shared\ResidentDirectoryController;
 use App\Http\Controllers\Shared\RuleBookController;
 use Illuminate\Support\Facades\Route;
@@ -121,6 +122,11 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('directory', [ResidentDirectoryController::class, 'index'])->name('directory.index');
     Route::patch('directory/settings', [ResidentDirectoryController::class, 'update'])->name('directory.update');
+
+    Route::resource('lost-found', LostFoundController::class)
+        ->except(['show', 'create', 'edit'])
+        ->parameters(['lost-found' => 'lostFound']);
+    Route::patch('lost-found/{lostFound}/resolve', [LostFoundController::class, 'resolve'])->name('lost-found.resolve');
 
     Route::get('announcements', [AnnouncementController::class, 'index'])->name('announcements.index');
     Route::get('announcements/{announcement}', [AnnouncementController::class, 'show'])->name('announcements.show');

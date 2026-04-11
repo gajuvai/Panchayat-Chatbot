@@ -10,6 +10,7 @@ $navLinks = [
     ['route' => 'admin.rules.index',         'match' => 'admin.rules.*',            'label' => 'Rule Book'],
     ['route' => 'admin.users.index',         'match' => 'admin.users.*',            'label' => 'Users'],
     ['route' => 'directory.index',           'match' => 'directory.*',              'label' => 'Community Directory'],
+    ['route' => 'lost-found.index',          'match' => 'lost-found.*',             'label' => 'Lost & Found'],
 ];
 @endphp
 @foreach($navLinks as $link)

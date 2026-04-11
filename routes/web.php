@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\AdminRuleBookController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\AdminAmenityController;
+use App\Http\Controllers\Admin\AdminDutyRosterController;
 use App\Http\Controllers\Admin\AdminExpenseController;
 use App\Http\Controllers\Admin\AdminMaintenanceController;
 use App\Http\Controllers\Resident\ComplaintController;
@@ -34,6 +35,7 @@ use App\Http\Controllers\Shared\NotificationController;
 use App\Http\Controllers\Shared\PollController;
 use App\Http\Controllers\Shared\AmenityBookingController;
 use App\Http\Controllers\Shared\AmenityController;
+use App\Http\Controllers\Shared\DutyRosterController;
 use App\Http\Controllers\Shared\ExpenseDashboardController;
 use App\Http\Controllers\Shared\LostFoundController;
 use App\Http\Controllers\Shared\ResidentDirectoryController;
@@ -91,6 +93,14 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('rules', AdminRuleBookController::class);
 
     // Expense management
+    // Duty Roster management
+    Route::get('duty-roster', [AdminDutyRosterController::class, 'index'])->name('duty-roster.index');
+    Route::post('duty-roster', [AdminDutyRosterController::class, 'store'])->name('duty-roster.store');
+    Route::patch('duty-roster/{dutyRoster}', [AdminDutyRosterController::class, 'update'])->name('duty-roster.update');
+    Route::delete('duty-roster/{dutyRoster}', [AdminDutyRosterController::class, 'destroy'])->name('duty-roster.destroy');
+    Route::post('duty-roster/{dutyRoster}/assign', [AdminDutyRosterController::class, 'assign'])->name('duty-roster.assign');
+    Route::delete('duty-roster/assignments/{assignment}', [AdminDutyRosterController::class, 'removeAssignment'])->name('duty-roster.assignments.remove');
+
     Route::get('expenses', [AdminExpenseController::class, 'index'])->name('expenses.index');
     Route::post('expenses', [AdminExpenseController::class, 'store'])->name('expenses.store');
     Route::patch('expenses/{expense}', [AdminExpenseController::class, 'update'])->name('expenses.update');
@@ -152,6 +162,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('polls/{poll}/vote', [PollController::class, 'vote'])->name('polls.vote');
 
     // Expense dashboard (all roles)
+    // Duty Roster (shared view)
+    Route::get('my-duties', [DutyRosterController::class, 'index'])->name('duty-roster.index');
+    Route::post('duty-roster/{dutyRoster}/signup', [DutyRosterController::class, 'signup'])->name('duty-roster.signup');
+    Route::patch('duty-assignments/{assignment}/confirm', [DutyRosterController::class, 'confirm'])->name('duty-roster.confirm');
+    Route::patch('duty-assignments/{assignment}/decline', [DutyRosterController::class, 'decline'])->name('duty-roster.decline');
+
     Route::get('expenses', [ExpenseDashboardController::class, 'index'])->name('expenses.index');
 
     // Amenities (browse + book)

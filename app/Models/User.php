@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\AmenityBooking;
+use App\Models\DutyAssignment;
+use App\Models\DutyRoster;
 use App\Models\LostAndFoundItem;
 use App\Models\MaintenanceRequest;
 use App\Models\VisitorPass;
@@ -132,6 +134,16 @@ class User extends Authenticatable
     public function assignedMaintenanceRequests(): HasMany
     {
         return $this->hasMany(MaintenanceRequest::class, 'assigned_to');
+    }
+
+    public function dutyAssignments(): HasMany
+    {
+        return $this->hasMany(DutyAssignment::class);
+    }
+
+    public function createdDutyRosters(): HasMany
+    {
+        return $this->hasMany(DutyRoster::class, 'created_by');
     }
 
     public function approvedVisitorPasses(): HasMany
